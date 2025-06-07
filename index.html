@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NooraSense - Material Analysis</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="description" content="Smart Material Analysis with AI">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Noora Sense">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-167x167.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/pro/css/all.css">
+<style>
+@keyframes spectralWave {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.spectral-animation {
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #f97316, #f59e0b);
+    background-size: 400% 400%;
+    animation: spectralWave 8s ease infinite;
+}
+
+.progress-ring {
+    transition: stroke-dashoffset 0.5s ease;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.parameter-pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.nutrient-countup {
+    transition: all 0.5s ease-out;
+}
+
+.wavelength-graph {
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 30%, #ec4899 60%, #f97316 90%);
+}
+
+.progress-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+}
+
+/* Enhanced Chatbot Styles */
+.chat-container {
+    height: 320px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #3b82f6 #f1f1f1;
+    background-color: #f8fafc;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.chat-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background-color: #3b82f6;
+    border-radius: 10px;
+}
+
+.chat-bubble {
+    max-width: 85%;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    position: relative;
+    word-wrap: break-word;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.ai-bubble {
+    background-color: white;
+    border-radius: 18px 18px 18px 4px;
+    border: 1px solid #e2e8f0;
+    align-self: flex-start;
+}
+
+.user-bubble {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: white;
+    border-radius: 18px 18px 4px 18px;
+    align-self: flex-end;
+}
+
+/* Typing indicator */
+.typing-indicator {
+    display: inline-flex;
+    align-items: center;
+}
+
+.typing-indicator span {
+    height: 8px;
+    width: 8px;
+    margin: 0 2px;
+    background-color: #9CA3AF;
+    border-radius: 50%;
+    display: inline-block;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.typing-indicator span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+    0%, 80%, 100% { 
+        transform: scale(0);
+    }
+    40% { 
+        transform: scale(1);
+    }
+}
+
+/* Enhanced quick questions */
+.quick-question {
+    transition: all 0.2s ease;
+}
+
+.quick-question:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+</style></head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="w-20 bg-white shadow-md flex flex-col items-center py-6">
+            <div class="mb-8">
+                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
+                    <i class="fas fa-seedling text-2xl"></i>
+                </div>
+            </div>
+            
+            <button class="w-12 h-12 mb-4 rounded-xl flex items-center justify-center text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition">
+                <i class="fas fa-home text-xl"></i>
+            </button>
+            
+            <button class="w-12 h-12 mb-4 rounded-xl flex items-center justify-center text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition">
+                <i class="fas fa-history text-xl"></i>
+            </button>
+            
+            <button class="w-12 h-12 mb-4 rounded-xl flex items-center justify-center text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition">
+                <i class="fas fa-chart-bar text-xl"></i>
+            </button>
+            
+            <button class="w-12 h-12 mb-4 rounded-xl flex items-center justify-center text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition">
+                <i class="fas fa-cog text-xl"></i>
+            </button>
+            
+            <div class="mt-auto">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-green-100 text-green-600">
+                    <i class="fas fa-plug text-xl"></i>
+                </div>
+                <div class="text-xs text-center mt-1 text-green-600">Connected</div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Bar -->
+            <div class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <h1 class="text-xl font-semibold text-gray-800">Noora Sense</h1>
+                <div class="flex items-center relative">
+                    <button id="userMenuBtn" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <i class="fas fa-user text-gray-600"></i>
+                    </button>
+                    <div id="userMenuDropdown" class="hidden absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                        <div class="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">Select Fruit</div>
+                        <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 flex items-center" onclick="changeFruit('apple')">
+                            <i class="fa-duotone fa-apple-whole text-red-600 mr-2"></i> Apple (Red Delicious)
+                        </button>
+                        <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 flex items-center" onclick="changeFruit('peach')">
+                            <i class="fa-duotone fa-peach text-orange-400 mr-2"></i> Peach
+                        </button>
+                        <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 flex items-center" onclick="changeFruit('watermelon')">
+                            <i class="fa-duotone fa-melon text-green-600 mr-2"></i> Watermelon
+                        </button>
+                        <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 flex items-center" onclick="changeFruit('tomato')">
+                            <i class="fa-duotone fa-tomato text-red-500 mr-2"></i> Tomato
+                        </button>
+                        <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 flex items-center" onclick="changeFruit('apricot')">
+                            <i class="fa-duotone fa-lemon text-amber-500 mr-2"></i> Apricot
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dynamic Content Area -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <!-- Connection Status -->
+                <div id="connectionPanel" class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 mr-4">
+                            <i class="fas fa-plug text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold text-lg">Spectrometer Connected</h2>
+                            <p class="text-gray-500 text-sm">USB-C device ready for analysis</p>
+                        </div>
+                    </div>
+                    <button id="startAnalysisBtn" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-xl font-medium transition flex items-center justify-center">
+                        <i class="fas fa-play mr-2"></i> Start Analysis
+                    </button>
+                </div>
+                
+                <!-- Analysis Progress -->
+                <div id="analysisPanel" class="hidden bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <div class="text-center mb-6">
+                        <h2 class="font-semibold text-lg mb-1">Analyzing Sample</h2>
+                        <p class="text-gray-500 text-sm">Place the spectrometer firmly on the material</p>
+                    </div>
+                    
+                    <div class="progress-container mb-6">
+                        <svg class="w-full h-full">
+                            <circle
+                                class="text-gray-200"
+                                stroke-width="8"
+                                stroke="currentColor"
+                                fill="transparent"
+                                r="64"
+                                cx="80"
+                                cy="80"
+                            />
+                            <circle
+                                class="progress-ring text-blue-600"
+                                stroke-width="8"
+                                stroke-linecap="round"
+                                stroke="currentColor"
+                                fill="transparent"
+                                r="64"
+                                cx="80"
+                                cy="80"
+                                stroke-dasharray="402"
+                                stroke-dashoffset="402"
+                                id="progressCircle"
+                            />
+                        </svg>
+                        <div class="progress-text">
+                            <div id="progressPercent" class="text-3xl font-bold text-blue-600">0%</div>
+                            <div class="text-xs text-gray-500">COMPLETE</div>
+                        </div>
+                    </div>
+                    
+                    <div class="spectral-animation h-2 rounded-full mb-4"></div>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="bg-gray-50 rounded-lg p-3 text-center">
+                            <div class="text-xs text-gray-500 mb-1">Moisture</div>
+                            <div id="moistureValue" class="font-semibold">${fruits[currentFruit].moisture}%</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3 text-center">
+                            <div class="text-xs text-gray-500 mb-1">Acidity</div>
+                            <div id="acidityValue" class="font-semibold">${fruits[currentFruit].acidity}</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3 text-center">
+                            <div class="text-xs text-gray-500 mb-1">Sugar</div>
+                            <div id="sugarValue" class="font-semibold">${fruits[currentFruit].sugar}g</div>
+                        </div>
+                    </div>
+                    
+                    <div class="wavelength-graph h-32 rounded-xl mb-4 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent to-white opacity-50"></div>
+                        <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-gray-900 to-transparent opacity-20"></div>
+                        <div class="absolute bottom-0 left-0 w-full h-px bg-gray-300"></div>
+                        <div class="absolute bottom-0 left-0 right-0 flex justify-between px-2">
+                            <span class="text-xs text-white">900nm</span>
+                            <span class="text-xs text-white">1300nm</span>
+                            <span class="text-xs text-white">1700nm</span>
+                        </div>
+                    </div>
+                    
+                    <button id="cancelAnalysisBtn" class="w-full mt-4 border border-gray-300 hover:bg-gray-50 text-gray-700 py-3 px-4 rounded-xl font-medium transition">
+                        Cancel Analysis
+                    </button>
+                </div>
+                
+                <!-- Material Detection -->
+                <div id="detectionPanel" class="hidden bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <div class="text-center mb-6">
+                        <h2 class="font-semibold text-lg mb-1">Material Detected</h2>
+                        <p class="text-gray-500 text-sm">AI analysis complete</p>
+                    </div>
+                    
+                    <div class="bg-blue-50 rounded-xl p-4 mb-6">
+                        <div class="flex items-center">
+                            <div class="w-16 h-16 rounded-lg bg-white flex items-center justify-center shadow-sm mr-4">
+                                <i class="fas fa-apple-alt text-3xl text-red-500" id="fruitIcon"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold" id="fruitName">Apple (Red Delicious)</h3>
+                                <div class="flex items-center">
+                                    <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                        <div class="bg-green-500 h-2 rounded-full" id="confidenceBar" style="width: 92%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600" id="confidenceText">92% confidence</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="bg-gray-50 rounded-lg p-3 text-center">
+                            <div class="text-xs text-gray-500 mb-1">Moisture</div>
+                            <!-- <div class="font-semibold">87.3%</div> -->
+                            <div class="font-semibold" id="detectMoisture"></div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3 text-center">
+                            <div class="text-xs text-gray-500 mb-1">Acidity</div>
+                            <div class="font-semibold" id="detectAcidity"></div>
+                            <!-- <div class="font-semibold">3.8</div> -->
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3 text-center">
+                            <div class="text-xs text-gray-500 mb-1">Sugar</div>
+                            <div class="font-semibold" id="detectSugar"></div>
+                            <!-- <div class="font-semibold">11.2g</div> -->
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-3 mb-6">
+                        <button id="confirmMaterialBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-xl font-medium transition">
+                            <i class="fas fa-check mr-2"></i> Confirm
+                        </button>
+                        <button id="editMaterialBtn" class="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 py-3 px-4 rounded-xl font-medium transition">
+                            <i class="fas fa-edit mr-2"></i> Edit
+                        </button>
+                    </div>
+                    
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-circle text-yellow-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-yellow-700">
+                                    Potential pesticide residue detected (0.12ppm). Tap for details.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Results Panel -->
+                <div id="resultsPanel" class="hidden bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h2 class="font-semibold text-lg">Analysis Report</h2>
+                                <p class="text-gray-500 text-sm">2 minutes ago</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                                <button class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex mb-6">
+                            <div class="w-16 h-16 rounded-lg bg-blue-50 flex items-center justify-center shadow-sm mr-4">
+                                <i id="resultIcon" class="fas fa-apple-alt text-3xl text-red-500"></i>
+                            </div>
+                            <div>
+                                <h3 id="resultName" class="font-semibold"></h3>
+                                <p id="resultScientific" class="text-gray-500 text-sm"></p>
+                                <div class="flex items-center mt-1">
+                                    <div class="flex items-center text-yellow-500 mr-3">
+                                        <i class="fas fa-star text-sm"></i>
+                                        <i class="fas fa-star text-sm"></i>
+                                        <i class="fas fa-star text-sm"></i>
+                                        <i class="fas fa-star text-sm"></i>
+                                        <i class="fas fa-star-half-alt text-sm"></i>
+                                    </div>
+                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full" id="resultConfidence"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-gray-200 px-6 py-4">
+                        <h3 class="font-medium text-gray-900 mb-3">Nutritional Parameters</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Sugar Content</span>
+                                    <span class="text-sm font-semibold text-blue-600" id="resultSugar"></span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div class="bg-blue-600 h-1.5 rounded-full" id="sugarBar"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Acidity (pH)</span>
+                                    <span class="text-sm font-semibold text-blue-600" id="resultAcidity"></span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div class="bg-blue-600 h-1.5 rounded-full" id="acidityBar"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Moisture</span>
+                                    <span class="text-sm font-semibold text-blue-600" id="resultMoisture"></span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div class="bg-blue-600 h-1.5 rounded-full" id="moistureBar"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Dietary Fiber</span>
+                                    <span class="text-sm font-semibold text-blue-600" id="resultFiber"></span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div class="bg-blue-600 h-1.5 rounded-full" id="fiberBar"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Vitamin C</span>
+                                    <span class="text-sm font-semibold text-blue-600" id="resultVitC"></span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div class="bg-blue-600 h-1.5 rounded-full" id="vitCBar"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Antioxidants</span>
+                                    <span class="text-sm font-semibold text-blue-600" id="resultAntioxidants"></span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div class="bg-blue-600 h-1.5 rounded-full" id="antioxidantsBar"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Starch</span>
+                                    <span class="text-sm font-semibold text-blue-600" id="resultStarch"></span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div class="bg-blue-600 h-1.5 rounded-full" id="starchBar"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Protein</span>
+                                    <span class="text-sm font-semibold text-blue-600" id="resultProtein"></span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div class="bg-blue-600 h-1.5 rounded-full" id="proteinBar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-gray-200 px-6 py-4">
+                        <h3 class="font-medium text-gray-900 mb-3">Hazard Parameters</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-red-50 rounded-lg p-3">
+                                <div class="flex items-center mb-1">
+                                    <div class="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-red-600 mr-2">
+                                        <i class="fas fa-exclamation text-xs"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-red-800">Pesticides</span>
+                                </div>
+                                <div class="text-xs text-red-700">0.12ppm detected (0.1ppm limit)</div>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-3">
+                                <div class="flex items-center mb-1">
+                                    <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-2">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-green-800">Mycotoxins</span>
+                                </div>
+                                <div class="text-xs text-green-700">No detection</div>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-3">
+                                <div class="flex items-center mb-1">
+                                    <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-2">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-green-800">Heavy Metals</span>
+                                </div>
+                                <div class="text-xs text-green-700">Below detectable limits</div>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-3">
+                                <div class="flex items-center mb-1">
+                                    <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-2">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-green-800">Microbial</span>
+                                </div>
+                                <div class="text-xs text-green-700">No contamination</div>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-3">
+                                <div class="flex items-center mb-1">
+                                    <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-2">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-green-800">Foreign Matter</span>
+                                </div>
+                                <div class="text-xs text-green-700">None detected</div>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-3">
+                                <div class="flex items-center mb-1">
+                                    <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-2">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-green-800">Artificial Colors</span>
+                                </div>
+                                <div class="text-xs text-green-700">None detected</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-gray-200 px-6 py-4">
+                        <h3 class="font-medium text-gray-900 mb-3">Spectral Signature</h3>
+                        <div class="wavelength-graph h-40 rounded-xl relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent to-white opacity-50"></div>
+                            <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-gray-900 to-transparent opacity-20"></div>
+                            <div class="absolute bottom-0 left-0 w-full h-px bg-gray-300"></div>
+                            <div class="absolute bottom-0 left-0 right-0 flex justify-between px-2">
+                                <span class="text-xs text-white">900nm</span>
+                                <span class="text-xs text-white">1300nm</span>
+                                <span class="text-xs text-white">1700nm</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Chatbot Section - Redesigned -->
+                    <div class="border-t border-gray-200 px-6 py-4 bg-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-medium text-gray-900 text-lg flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white mr-2">
+                                    <i class="fas fa-robot text-sm"></i>
+                                </div>
+                                Noora AI Assistant
+                            </h3>
+                            <div class="flex space-x-1">
+                                <button class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition">
+                                    <i class="fas fa-ellipsis-h text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="chatContainer" class="chat-container bg-gray-50 rounded-xl p-4 mb-3 flex flex-col space-y-3 h-64">
+                            <!-- Messages will be added here dynamically -->
+                        </div>
+                        
+                        <!-- Quick Questions -->
+                        <div class="flex space-x-2 mb-3 overflow-x-auto pb-2">
+                            <button onclick="sendQuickQuestion('Storage recommendations')" class="flex-shrink-0 text-xs bg-white border border-gray-200 rounded-full px-3 py-1.5 hover:bg-gray-50 flex items-center">
+                                <i class="fas fa-box-open text-gray-500 mr-1 text-xs"></i>
+                                Storage
+                            </button>
+                            <button onclick="sendQuickQuestion('Compare to last scan')" class="flex-shrink-0 text-xs bg-white border border-gray-200 rounded-full px-3 py-1.5 hover:bg-gray-50 flex items-center">
+                                <i class="fas fa-not-equal text-gray-500 mr-1 text-xs"></i>
+                                Compare
+                            </button>
+                            <button onclick="sendQuickQuestion('Nutritional advice')" class="flex-shrink-0 text-xs bg-white border border-gray-200 rounded-full px-3 py-1.5 hover:bg-gray-50 flex items-center">
+                                <i class="fas fa-apple-alt text-gray-500 mr-1 text-xs"></i>
+                                Nutrition
+                            </button>
+                            <button onclick="sendQuickQuestion('Safety assessment')" class="flex-shrink-0 text-xs bg-white border border-gray-200 rounded-full px-3 py-1.5 hover:bg-gray-50 flex items-center">
+                                <i class="fas fa-shield-alt text-gray-500 mr-1 text-xs"></i>
+                                Safety
+                            </button>
+                            <button onclick="sendQuickQuestion('Export lab report')" class="flex-shrink-0 text-xs bg-white border border-gray-200 rounded-full px-3 py-1.5 hover:bg-gray-50 flex items-center">
+                                <i class="fas fa-file-export text-gray-500 mr-1 text-xs"></i>
+                                Export
+                            </button>
+                        </div>
+                        
+                        <!-- Message Input -->
+                        <div class="flex items-center bg-gray-50 rounded-lg px-3 py-2 border border-gray-200">
+                            <button class="w-8 h-8 rounded-full text-gray-500 hover:bg-gray-100 flex items-center justify-center">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <input id="chatInput" type="text" placeholder="Ask Noora about this analysis..." class="flex-1 border-0 bg-transparent px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <button onclick="sendMessage()" class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition">
+                                <i class="fas fa-paper-plane text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Navigation -->
+            <div class="bg-white border-t border-gray-200 p-3 flex justify-center">
+                <button id="newScanBtn" class="fixed bottom-6 w-14 h-14 rounded-full bg-blue-600 text-white shadow-lg flex items-center justify-center hover:bg-blue-700 transition">
+                    <i class="fas fa-plus text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      // Add this helper function before the fruit data
+      function getIconClass(fruitType) {
+          // Map of fruit types to Font Awesome Pro icons
+          const iconMap = {
+              'apple': 'fa-apple-whole',  // Pro icon for apple
+              'peach': 'fa-peach',        // Pro fruit icon
+              'watermelon': 'fa-melon',   // Pro fruit icon
+              'tomato': 'fa-tomato',      // Pro vegetable icon
+              'apricot': 'fa-lemon'       // Using lemon icon for apricot
+          };
+          return iconMap[fruitType] || 'fa-fruit'; // Default to generic fruit icon
+      }
+
+      // Update the fruits object with new icon colors
+      const fruits = {
+          'apple': {
+              name: 'Apple (Red Delicious)', 
+              scientific: 'Malus domestica',
+              type: 'apple',
+              color: 'red-600',  // Slightly adjusted color
+              moisture: 87.3,
+              acidity: 3.8,
+              sugar: 11.2,
+              fiber: 2.4,
+              vitC: 8.4,
+              confidence: 92,
+              pesticide: 0.12,
+              starch: 0.5,
+              protein: 0.3,
+              antioxidants: 'High'
+          },
+          'peach': {
+              name: 'Peach', 
+              scientific: 'Prunus persica',
+              type: 'peach',
+              color: 'orange-400',  // Adjusted for better visibility
+              moisture: 88.9,
+              acidity: 4.0,
+              sugar: 8.4,
+              fiber: 1.5,
+              vitC: 6.6,
+              confidence: 88,
+              pesticide: 0.08,
+              starch: 0.2,
+              protein: 0.9,
+              antioxidants: 'Medium'
+          },
+          'watermelon': {
+              name: 'Watermelon', 
+              scientific: 'Citrullus lanatus',
+              type: 'watermelon',
+              color: 'green-600',  // Adjusted color
+              moisture: 91.5,
+              acidity: 5.2,
+              sugar: 6.2,
+              fiber: 0.4,
+              vitC: 8.1,
+              confidence: 95,
+              pesticide: 0.15,
+              starch: 0.1,
+              protein: 0.6,
+              antioxidants: 'High'
+          },
+          'tomato': {
+              name: 'Tomato', 
+              scientific: 'Solanum lycopersicum',
+              type: 'tomato',
+              color: 'red-500',
+              moisture: 94.5,
+              acidity: 4.3,
+              sugar: 2.6,
+              fiber: 1.2,
+              vitC: 12.7,
+              confidence: 90,
+              pesticide: 0.22,
+              starch: 0.3,
+              protein: 0.9,
+              antioxidants: 'High'
+          },
+          'apricot': {
+              name: 'Apricot', 
+              scientific: 'Prunus armeniaca',
+              type: 'apricot',
+              color: 'amber-500',  // Updated color
+              moisture: 86.3,
+              acidity: 3.5,
+              sugar: 9.2,
+              fiber: 2.0,
+              vitC: 10,
+              confidence: 85,
+              pesticide: 0.07,
+              starch: 0.4,
+              protein: 1.4,
+              antioxidants: 'Medium'
+          }
+      };
+
+      // Current fruit selection (change this value to switch fruits)
+      let currentFruit = 'apple';
+
+      // DOM Elements
+const connectionPanel = document.getElementById('connectionPanel');
+const analysisPanel = document.getElementById('analysisPanel');
+const detectionPanel = document.getElementById('detectionPanel');
+const resultsPanel = document.getElementById('resultsPanel');
+const startAnalysisBtn = document.getElementById('startAnalysisBtn');
+const cancelAnalysisBtn = document.getElementById('cancelAnalysisBtn');
+const confirmMaterialBtn = document.getElementById('confirmMaterialBtn');
+const editMaterialBtn = document.getElementById('editMaterialBtn');
+const newScanBtn = document.getElementById('newScanBtn');
+const progressCircle = document.getElementById('progressCircle');
+const progressPercent = document.getElementById('progressPercent');
+const moistureValue = document.getElementById('moistureValue');
+const acidityValue = document.getElementById('acidityValue');
+const sugarValue = document.getElementById('sugarValue');
+const chatContainer = document.getElementById('chatContainer');
+const chatInput = document.getElementById('chatInput');
+
+// Animation variables
+let progress = 0;
+let animationInterval;
+let moisture = 0;
+let acidity = 0;
+let sugar = 0;
+
+// Initialize the app
+function initApp() {
+    connectionPanel.classList.remove('hidden');
+    analysisPanel.classList.add('hidden');
+    detectionPanel.classList.add('hidden');
+    resultsPanel.classList.add('hidden');
+    
+    // Set up event listeners
+    setupEventListeners();
+    
+    // Initialize detection panel with current fruit data
+    updateDetectionWithFruitData();
+    
+    // Handle user menu toggle with improved positioning
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userMenuDropdown = document.getElementById('userMenuDropdown');
+    
+    userMenuBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        userMenuDropdown.classList.toggle('hidden');
+        
+        // Ensure the dropdown is visible within the viewport
+        const dropdownRect = userMenuDropdown.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        
+        if (dropdownRect.bottom > viewportHeight) {
+            userMenuDropdown.style.maxHeight = `${viewportHeight - dropdownRect.top - 20}px`;
+            userMenuDropdown.style.overflowY = 'auto';
+        }
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function() {
+        userMenuDropdown.classList.add('hidden');
+    });
+}
+
+// Change fruit selection
+function changeFruit(fruit) {
+    currentFruit = fruit;
+    const dropdown = document.getElementById('userMenuDropdown');
+    dropdown.classList.add('hidden');
+    
+    // Update detection panel if visible
+    if (!detectionPanel.classList.contains('hidden')) {
+        updateDetectionWithFruitData();
+    }
+    
+    // Update results panel if visible
+    if (!resultsPanel.classList.contains('hidden')) {
+        updateResultsWithFruitData();
+    }
+}
+
+// Set up all event listeners
+function setupEventListeners() {
+    // Start analysis
+    startAnalysisBtn.addEventListener('click', startAnalysis);
+    
+    // Cancel analysis
+    cancelAnalysisBtn.addEventListener('click', cancelAnalysis);
+    
+    // Confirm material
+    confirmMaterialBtn.addEventListener('click', confirmMaterial);
+    
+    // Edit material
+    editMaterialBtn.addEventListener('click', editMaterial);
+    
+    // New scan
+    newScanBtn.addEventListener('click', newScan);
+    
+    // Chat input - allow Enter key to send message
+    chatInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+}
+
+// Start analysis process
+function startAnalysis() {
+    connectionPanel.classList.add('hidden');
+    analysisPanel.classList.remove('hidden');
+    
+    // Reset parameters
+    progress = 0;
+    moisture = 0;
+    acidity = 0;
+    sugar = 0;
+    
+    // Start progress animation
+    updateProgress();
+    animationInterval = setInterval(updateProgress, 100);
+    
+    // Simulate parameter updates
+    simulateParameterUpdates();
+}
+
+// Cancel analysis process
+function cancelAnalysis() {
+    clearInterval(animationInterval);
+    connectionPanel.classList.remove('hidden');
+    analysisPanel.classList.add('hidden');
+    detectionPanel.classList.add('hidden');
+    resultsPanel.classList.add('hidden');
+}
+
+// Confirm material and show results
+function confirmMaterial() {
+    detectionPanel.classList.add('hidden');
+    resultsPanel.classList.remove('hidden');
+    updateResultsWithFruitData();
+    
+    // Clear chat and show welcome message when confirming
+    chatContainer.innerHTML = '';
+    const fruit = fruits[currentFruit];
+    const welcomeMessage = `Hello! 👋 I'm Noora AI Assistant, here to help you understand your ${fruit.name} analysis.
+
+I can help you with:
+• 🍎 Nutritional insights and benefits
+• 🛡️ Safety evaluations and concerns  
+• ❄️ Optimal storage recommendations
+• 📊 Comparisons with previous scans
+• 📤 Exporting your analysis results
+
+How can I assist you with this sample today?`;
+console.log('Adding welcome message for', fruit.name);
+    addMessageToChat(welcomeMessage, 'ai');
+}
+
+// Edit material (placeholder for actual functionality)
+function editMaterial() {
+    alert('Material selection dialog would appear here');
+}
+
+// Start a new scan
+function newScan() {
+    resultsPanel.classList.add('hidden');
+    connectionPanel.classList.remove('hidden');
+    
+    // Clear chat
+    chatContainer.innerHTML = '';
+}
+
+// Update detection panel with current fruit data
+function updateDetectionWithFruitData() {
+    const fruit = fruits[currentFruit];
+    const iconClass = getIconClass(fruit.type);
+
+    // Update fruit name and icon
+    document.getElementById('fruitName').textContent = fruit.name;
+    document.getElementById('fruitIcon').className = `fas ${iconClass} text-3xl text-${fruit.color}`;
+    document.getElementById('confidenceBar').style.width = `${fruit.confidence}%`;
+    document.getElementById('confidenceText').textContent = `${fruit.confidence}% confidence`;
+
+    // Update detection parameters
+    document.getElementById('detectMoisture').textContent = `${fruit.moisture}%`;
+    document.getElementById('detectAcidity').textContent = fruit.acidity;
+    document.getElementById('detectSugar').textContent = `${fruit.sugar}g`;
+}
+
+// Update results with current fruit data
+function updateResultsWithFruitData() {
+    const fruit = fruits[currentFruit];
+    const iconClass = getIconClass(fruit.type);
+
+    // Update analysis panel values
+    moistureValue.textContent = `${fruit.moisture}%`;
+    acidityValue.textContent = fruit.acidity;
+    sugarValue.textContent = `${fruit.sugar}g`;
+
+    // Update header section
+    document.getElementById('fruitName').textContent = fruit.name;
+    document.getElementById('fruitIcon').className = `fas ${iconClass} text-3xl text-${fruit.color}`;
+    document.getElementById('confidenceBar').style.width = `${fruit.confidence}%`;
+    document.getElementById('confidenceText').textContent = `${fruit.confidence}% confidence`;
+
+    // Update results panel header
+    document.getElementById('resultIcon').className = `fas ${iconClass} text-3xl text-${fruit.color}`;
+    document.getElementById('resultName').textContent = fruit.name;
+    document.getElementById('resultScientific').textContent = fruit.scientific;
+    document.getElementById('resultConfidence').textContent = `${fruit.confidence}% match`;
+
+    // Update all nutritional parameters in results panel
+    document.getElementById('resultSugar').textContent = `${fruit.sugar}g`;
+    document.getElementById('sugarBar').style.width = `${(fruit.sugar/15)*100}%`;  // Assuming max sugar is 15g
+
+    document.getElementById('resultAcidity').textContent = fruit.acidity;
+    document.getElementById('acidityBar').style.width = `${(fruit.acidity/7)*100}%`;  // Assuming pH scale 0-7
+
+    document.getElementById('resultMoisture').textContent = `${fruit.moisture}%`;
+    document.getElementById('moistureBar').style.width = `${fruit.moisture}%`;
+
+    document.getElementById('resultFiber').textContent = `${fruit.fiber}g`;
+    document.getElementById('fiberBar').style.width = `${(fruit.fiber/5)*100}%`;  // Assuming max fiber is 5g
+
+    document.getElementById('resultVitC').textContent = `${fruit.vitC}mg`;
+    document.getElementById('vitCBar').style.width = `${(fruit.vitC/15)*100}%`;  // Assuming max VitC is 15mg
+
+    document.getElementById('resultAntioxidants').textContent = fruit.antioxidants;
+    document.getElementById('antioxidantsBar').style.width = fruit.antioxidants === 'High' ? '75%' : fruit.antioxidants === 'Medium' ? '50%' : '25%';
+
+    document.getElementById('resultStarch').textContent = `${fruit.starch}g`;
+    document.getElementById('starchBar').style.width = `${(fruit.starch/2)*100}%`;  // Assuming max starch is 2g
+
+    document.getElementById('resultProtein').textContent = `${fruit.protein}g`;
+    document.getElementById('proteinBar').style.width = `${(fruit.protein/2)*100}%`;  // Assuming max protein is 2g
+
+    // Update pesticide warning if needed
+    const pesticideWarning = document.querySelector('.text-yellow-700');
+    if (pesticideWarning) {
+        pesticideWarning.textContent = `Potential pesticide residue detected (${fruit.pesticide}ppm). Tap for details.`;
+    }
+
+    // Show welcome message when results are first loaded
+    if (chatContainer.children.length === 0) {
+        const welcomeMessage = `Hello! 👋 I'm Noora AI Assistant, here to help you understand your ${fruit.name} analysis.
+
+I can help you with:
+• 🍎 Nutritional insights and benefits
+• 🛡️ Safety evaluations and concerns  
+• ❄️ Optimal storage recommendations
+• 📊 Comparisons with previous scans
+• 📤 Exporting your analysis results
+
+How can I assist you with this sample today?`;
+        addMessageToChat(welcomeMessage, 'ai');
+    }
+}
+
+// Update progress animation
+function updateProgress() {
+    progress += 0.5;
+    if (progress > 100) {
+        progress = 100;
+        clearInterval(animationInterval);
+        
+        // Show detection panel after analysis completes
+        setTimeout(() => {
+            analysisPanel.classList.add('hidden');
+            detectionPanel.classList.remove('hidden');
+        }, 500);
+    }
+    
+    const offset = 402 - (402 * progress / 100);
+    progressCircle.style.strokeDashoffset = offset;
+    progressPercent.textContent = `${Math.floor(progress)}%`;
+}
+
+// Simulate parameter updates during analysis
+function simulateParameterUpdates() {
+    const fruit = fruits[currentFruit];
+    let paramInterval = setInterval(() => {
+        if (progress >= 100) {
+            clearInterval(paramInterval);
+            moistureValue.textContent = `${fruit.moisture}%`;
+            acidityValue.textContent = fruit.acidity;
+            sugarValue.textContent = `${fruit.sugar}g`;
+            // Show detection panel with current fruit data
+            updateDetectionWithFruitData();
+            return;
+        }
+        
+        // Random parameter updates towards target values
+        moisture = Math.min(fruit.moisture, moisture + Math.random() * 2);
+        acidity = Math.min(fruit.acidity, acidity + Math.random() * 0.1);
+        sugar = Math.min(fruit.sugar, sugar + Math.random() * 0.5);
+        
+        moistureValue.textContent = `${moisture.toFixed(1)}%`;
+        acidityValue.textContent = acidity.toFixed(1);
+        sugarValue.textContent = `${sugar.toFixed(1)}g`;
+    }, 300);
+}
+
+// CHATBOT FUNCTIONS
+
+// Send a message from the chat input
+function sendMessage() {
+    const message = chatInput.value.trim();
+    if (message) {
+        // Add user message to chat
+        addMessageToChat(message, 'user');
+        chatInput.value = '';
+        
+        // Show typing indicator
+        showTypingIndicator();
+        
+        // Simulate AI response after a short delay
+        setTimeout(() => {
+            removeTypingIndicator();
+            const aiResponse = generateAIResponse(message);
+            addMessageToChat(aiResponse, 'ai');
+        }, 1500 + Math.random() * 1000); // Variable delay for more natural feel
+    }
+}
+
+// Send a quick question from the predefined buttons
+function sendQuickQuestion(question) {
+    // Add user message to chat
+    addMessageToChat(question, 'user');
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Simulate AI response after a short delay
+    setTimeout(() => {
+        removeTypingIndicator();
+        const aiResponse = generateAIResponse(question);
+        addMessageToChat(aiResponse, 'ai');
+    }, 1500);
+}
+
+// Show typing indicator in the chat
+function showTypingIndicator() {
+    const typingElement = document.createElement('div');
+    typingElement.className = 'flex';
+    typingElement.id = 'typingIndicator';
+    
+    typingElement.innerHTML = `
+        <div class="chat-bubble ai-bubble rounded-xl">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3">
+                        <i class="fas fa-robot text-sm"></i>
+                    </div>
+                </div>
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    chatContainer.appendChild(typingElement);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Remove typing indicator from the chat
+function removeTypingIndicator() {
+    const typingElement = document.getElementById('typingIndicator');
+    if (typingElement) {
+        typingElement.remove();
+    }
+}
+
+// Add a message to the chat container
+function addMessageToChat(message, sender) {
+    const messageElement = document.createElement('div');
+    messageElement.className = `flex ${sender === 'user' ? 'justify-end' : ''} message-${Date.now()}`;
+    messageElement.style.opacity = '0';
+    messageElement.style.transform = sender === 'user' ? 'translateX(10px)' : 'translateX(-10px)';
+    messageElement.style.transition = 'all 0.3s ease';
+    
+    const bubbleClass = sender === 'user' ? 'user-bubble' : 'ai-bubble';
+    const isAI = sender === 'ai';
+    
+    // Format message with paragraphs if there are newlines
+    const formattedMessage = message.replace(/\n/g, '<br>');
+    
+    messageElement.innerHTML = `
+        <div class="chat-bubble ${bubbleClass} rounded-xl">
+            <div class="flex items-start">
+                ${isAI ? `
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3">
+                        <i class="fas fa-robot text-sm"></i>
+                    </div>
+                </div>
+                ` : ''}
+                <div>
+                    <div class="text-sm ${sender === 'user' ? 'text-white' : 'text-gray-800'}">
+                        ${formattedMessage}
+                    </div>
+                </div>
+                ${!isAI ? `
+                <div class="flex-shrink-0 ml-3">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white">
+                        <i class="fas fa-user text-sm"></i>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+    
+    chatContainer.appendChild(messageElement);
+    
+    // Trigger animation
+    setTimeout(() => {
+        messageElement.style.opacity = '1';
+        messageElement.style.transform = 'translateX(0)';
+    }, 10);
+    
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Generate an AI response based on user input
+function generateAIResponse(userMessage) {
+    const fruit = fruits[currentFruit];
+    
+    // Check for exact matches first
+    if (typeof responses[userMessage] === 'function') {
+        return responses[userMessage](fruit);
+    }
+    
+    // Check for partial matches
+    const lowerMessage = userMessage.toLowerCase();
+    if (lowerMessage.includes("store") || lowerMessage.includes("keep")) {
+        return responses["Storage recommendations"](fruit);
+    } else if (lowerMessage.includes("compare") || lowerMessage.includes("previous")) {
+        return responses["Compare to last scan"](fruit);
+    } else if (lowerMessage.includes("export") || lowerMessage.includes("report")) {
+        return responses["Export lab report"](fruit);
+    } else if (lowerMessage.includes("nutrition") || lowerMessage.includes("health")) {
+        return responses["Nutritional advice"](fruit);
+    } else if (lowerMessage.includes("safe") || lowerMessage.includes("eat")) {
+        return responses["Safety assessment"](fruit);
+    }
+    
+    // Default response
+    return responses["default"](fruit);
+}
+
+// Initialize the application when the DOM is loaded
+document.addEventListener('DOMContentLoaded', initApp);
+
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+                console.log('ServiceWorker registration successful');
+            })
+            .catch(err => {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+    });
+}
+
+// Add install prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later
+    deferredPrompt = e;
+    // Show your install button or UI element here
+    // You could add a button or notification to suggest installation
+});
+
+// Function to handle PWA installation
+function installPWA() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+            }
+            deferredPrompt = null;
+        });
+    }
+}
+    </script>
+</body>
+</html>
