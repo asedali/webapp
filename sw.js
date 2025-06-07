@@ -2,7 +2,6 @@ const CACHE_NAME = 'noora-sense-v1';
 const urlsToCache = [
     '/',
     '/index.html',
-    '/pro/css/all.css',
     'https://cdn.tailwindcss.com',
     '/manifest.json'
 ];
