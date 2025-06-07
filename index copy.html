@@ -196,32 +196,11 @@
     height: 100%;
     fill: currentColor; /* This makes the SVG inherit the text color */
 }
-
-/* Add sidebar transition styles */
-.sidebar {
-    transition: transform 0.3s ease-in-out;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    z-index: 50;
-}
-.sidebar.hidden {
-    transform: translateX(-100%);
-}
-
-/* Add margin transition to main content */
-.main-content {
-    transition: margin-left 0.3s ease-in-out;
-}
-.main-content.sidebar-hidden {
-    margin-left: 0 !important;
-}
 </style></head>
 <body class="bg-gray-50 text-gray-800 font-sans">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
-        <div id="sidebar" class="sidebar w-20 bg-white shadow-md flex flex-col items-center py-6 hidden">
+        <div class="w-20 bg-white shadow-md flex flex-col items-center py-6">
             <div class="mb-8">
                 <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
                     <i class="fas fa-seedling text-2xl"></i>
@@ -253,15 +232,10 @@
         </div>
         
         <!-- Main Content -->
-        <div id="mainContent" class="main-content flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Top Bar -->
             <div class="bg-white shadow-sm p-4 flex justify-between items-center">
-                <div class="flex items-center">
-                    <button id="logoBtn" class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 mr-4">
-                        <i class="fas fa-seedling text-2xl"></i>
-                    </button>
-                    <h1 class="text-xl font-semibold text-gray-800">Noora Sense</h1>
-                </div>
+                <h1 class="text-xl font-semibold text-gray-800">Noora Sense</h1>
                 <div class="flex items-center relative">
                     <button id="userMenuBtn" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
                         <i class="fas fa-user text-gray-600"></i>
@@ -1322,30 +1296,6 @@ function installPWA() {
         });
     }
 }
-
-// Add sidebar toggle functionality
-const logoBtn = document.getElementById('logoBtn');
-const sidebar = document.getElementById('sidebar');
-const mainContent = document.getElementById('mainContent');
-
-logoBtn.addEventListener('click', function() {
-    sidebar.classList.toggle('hidden');
-    mainContent.classList.toggle('sidebar-hidden');
-});
-
-// Close sidebar when clicking outside
-document.addEventListener('click', function(e) {
-    if (!sidebar.contains(e.target) && !logoBtn.contains(e.target) && !sidebar.classList.contains('hidden')) {
-        sidebar.classList.add('hidden');
-        mainContent.classList.add('sidebar-hidden');
-    }
-});
-
-// Initialize with hidden sidebar
-document.addEventListener('DOMContentLoaded', function() {
-    sidebar.classList.add('hidden');
-    mainContent.classList.add('sidebar-hidden');
-});
     </script>
 </body>
 </html>
