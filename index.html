@@ -386,15 +386,15 @@
                     <div class="bg-blue-50 rounded-xl p-4 mb-6">
                         <div class="flex items-center">
                             <div class="w-16 h-16 rounded-lg bg-white flex items-center justify-center shadow-sm mr-4">
-                                <i class="fas fa-apple-alt text-3xl text-red-500" id="fruitIcon"></i>
+                                <i class="fas text-3xl text-red-500" id="fruitIcon"></i>
                             </div>
                             <div>
-                                <h3 class="font-semibold" id="fruitName">Apple (Red Delicious)</h3>
+                                <h3 class="font-semibold" id="fruitName"></h3>
                                 <div class="flex items-center">
                                     <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
                                         <div class="bg-green-500 h-2 rounded-full" id="confidenceBar" style="width: 92%"></div>
                                     </div>
-                                    <span class="text-xs text-gray-600" id="confidenceText">92% confidence</span>
+                                    <span class="text-xs text-gray-600" id="confidenceText"> confidence</span>
                                 </div>
                             </div>
                         </div>
@@ -461,7 +461,7 @@
                         
                         <div class="flex mb-6">
                             <div class="w-16 h-16 rounded-lg bg-blue-50 flex items-center justify-center shadow-sm mr-4">
-                                <i id="resultIcon" class="fas fa-apple-alt text-3xl text-red-500"></i>
+                                <i id="resultIcon" class="fas text-3xl text-red-500"></i>
                             </div>
                             <div>
                                 <h3 id="resultName" class="font-semibold"></h3>
@@ -681,8 +681,11 @@
                             <button class="w-8 h-8 rounded-full text-gray-500 hover:bg-gray-100 flex items-center justify-center">
                                 <i class="fas fa-plus"></i>
                             </button>
-                            <input id="chatInput" type="text" placeholder="Ask Noora about this analysis..." class="flex-1 border-0 bg-transparent px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <button onclick="sendMessage()" class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition">
+                            <input id="chatInput" type="text" placeholder="Ask Noora about this analysis..." 
+                                class="flex-1 border-0 bg-transparent px-3 py-1.5 focus:outline-none text-sm" 
+                                style="-webkit-tap-highlight-color: transparent;">
+                            <button onclick="sendMessage()" 
+                                class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors duration-200 flex-shrink-0">
                                 <i class="fas fa-paper-plane text-sm"></i>
                             </button>
                         </div>
@@ -814,7 +817,7 @@
       };
 
       // Current fruit selection (change this value to switch fruits)
-      let currentFruit = 'apple';
+    //   let currentFruit = 'apple';
 
       // DOM Elements
 const connectionPanel = document.getElementById('connectionPanel');
@@ -840,6 +843,90 @@ let animationInterval;
 let moisture = 0;
 let acidity = 0;
 let sugar = 0;
+
+// Add responses object for chat functionality
+const responses = {
+    "Storage recommendations": (fruit) => `For optimal storage of your ${fruit.type}:
+
+🌡️ Temperature: Keep at 35-40°F (2-4°C)
+💧 Humidity: ${fruit.moisture > 90 ? 'High' : 'Moderate'} humidity environment
+⏰ Duration: 1-2 weeks when properly stored
+🏠 Location: Refrigerator crisper drawer
+
+Tips:
+• Keep away from ethylene-producing fruits
+• Check regularly for signs of ripening
+• Don't wash until ready to use
+• Store in a perforated plastic bag`,
+
+    "Compare to last scan": (fruit) => `Comparing with your last scan from 3 days ago:
+
+📊 Key Changes:
+• Sugar: ${(fruit.sugar - 0.3).toFixed(1)}g → ${fruit.sugar}g
+• Moisture: ${(fruit.moisture - 1.2).toFixed(1)}% → ${fruit.moisture}%
+• Acidity: ${(fruit.acidity - 0.2).toFixed(1)} → ${fruit.acidity}
+
+🎯 Analysis:
+The fruit shows optimal ripening progression with:
+• Slight increase in sugar content
+• Minor moisture loss
+• Stable acidity levels`,
+
+    "Nutritional advice": (fruit) => `Nutritional Insights for your ${fruit.type}:
+
+📊 Key Benefits:
+• Sugar: ${fruit.sugar}g (Natural fruit sugars)
+• Fiber: ${fruit.fiber}g (Supports digestive health)
+• Vitamin C: ${fruit.vitC}mg (${fruit.vitC > 10 ? 'High' : 'Moderate'} antioxidant content)
+• Antioxidants: ${fruit.antioxidants} levels
+
+💪 Health Benefits:
+• Supports immune system
+• Promotes healthy digestion
+• Natural energy source
+• ${fruit.antioxidants === 'High' ? 'Strong antioxidant properties' : 'Moderate antioxidant benefits'}
+
+🔍 Dietary Considerations:
+• Low calorie fruit choice
+• Natural source of vitamins
+• Good for balanced diet`,
+
+    "Safety assessment": (fruit) => `Safety Analysis for your ${fruit.type}:
+
+✅ Safe to Consume
+${fruit.pesticide > 0.1 ? '⚠️ Note: Slightly elevated pesticide levels' : '✅ Pesticide levels within safe limits'}
+
+📊 Safety Parameters:
+• Pesticides: ${fruit.pesticide}ppm ${fruit.pesticide > 0.1 ? '(Slightly above 0.1ppm limit)' : '(Within limits)'}
+• Heavy Metals: Not detected
+• Microbial: Safe levels
+• Foreign Matter: None detected
+
+🧼 Recommendation:
+Wash thoroughly before consumption to remove any surface residues.`,
+
+    "Export lab report": (fruit) => `I'll prepare a detailed lab report for your ${fruit.type}.
+
+📄 Report will include:
+• Complete nutritional analysis
+• Safety parameters
+• Spectral data
+• Storage recommendations
+
+🔄 Processing...
+Report will be ready in a few moments. Would you like it in PDF or Excel format?`,
+
+    "default": (fruit) => `I'm here to help you understand your ${fruit.type} analysis! 
+
+I can provide information about:
+• 📊 Nutritional content
+• ⚠️ Safety parameters
+• 🌡️ Storage recommendations
+• 📈 Comparison with previous scans
+• 📑 Detailed reports
+
+What specific aspect would you like to know more about?`
+};
 
 // Initialize the app
 function initApp() {
@@ -897,12 +984,11 @@ function changeFruit(fruit) {
     const dropdown = document.getElementById('userMenuDropdown');
     dropdown.classList.add('hidden');
     
-    // Update detection panel if visible
+    // Update panels based on visibility
     if (!detectionPanel.classList.contains('hidden')) {
         updateDetectionWithFruitData();
     }
     
-    // Update results panel if visible
     if (!resultsPanel.classList.contains('hidden')) {
         updateResultsWithFruitData();
     }
@@ -1001,80 +1087,79 @@ function newScan() {
 // Update detection panel with current fruit data
 async function updateDetectionWithFruitData() {
     const fruit = fruits[currentFruit];
-    const iconPath = getIconClass(fruit.type);
-    const svgContent = await loadSvgIcon(iconPath);
-
-    // Update fruit name and icon
-    document.getElementById('fruitName').textContent = fruit.name;
-    const iconElement = document.getElementById('fruitIcon');
-    iconElement.className = `icon icon-lg text-${fruit.color}`;
-    iconElement.innerHTML = svgContent;
     
-    document.getElementById('confidenceBar').style.width = `${fruit.confidence}%`;
-    document.getElementById('confidenceText').textContent = `${fruit.confidence}% confidence`;
-
-    // Update detection parameters
+    // Update detection parameters first
     document.getElementById('detectMoisture').textContent = `${fruit.moisture}%`;
     document.getElementById('detectAcidity').textContent = fruit.acidity;
     document.getElementById('detectSugar').textContent = `${fruit.sugar}g`;
+    
+    document.getElementById('fruitName').textContent = fruit.name;
+    document.getElementById('confidenceBar').style.width = `${fruit.confidence}%`;
+    document.getElementById('confidenceText').textContent = `${fruit.confidence}% confidence`;
+
+    // Update icon
+    const iconPath = getIconClass(fruit.type);
+    const svgContent = await loadSvgIcon(iconPath);
+    const iconElement = document.getElementById('fruitIcon');
+    iconElement.className = `icon icon-lg text-${fruit.color}`;
+    iconElement.innerHTML = svgContent;
 }
 
 // Update results with current fruit data
 async function updateResultsWithFruitData() {
     const fruit = fruits[currentFruit];
-    const iconPath = getIconClass(fruit.type);
-    const svgContent = await loadSvgIcon(iconPath);
-
-    // Update icon elements
-    const resultIconElement = document.getElementById('resultIcon');
-    resultIconElement.className = `icon icon-lg text-${fruit.color}`;
-    resultIconElement.innerHTML = svgContent;
-
-    // Update analysis panel values
-    moistureValue.textContent = `${fruit.moisture}%`;
-    acidityValue.textContent = fruit.acidity;
-    sugarValue.textContent = `${fruit.sugar}g`;
-
-    // Update header section
-    document.getElementById('fruitName').textContent = fruit.name;
+    
+    // Update all text content and progress bars first
     document.getElementById('resultName').textContent = fruit.name;
     document.getElementById('resultScientific').textContent = fruit.scientific;
     document.getElementById('resultConfidence').textContent = `${fruit.confidence}% match`;
 
-    // Update all nutritional parameters in results panel
+    // Update analysis panel values
+    document.getElementById('moistureValue').textContent = `${fruit.moisture}%`;
+    document.getElementById('acidityValue').textContent = fruit.acidity;
+    document.getElementById('sugarValue').textContent = `${fruit.sugar}g`;
+
+    // Update all nutritional parameters
     document.getElementById('resultSugar').textContent = `${fruit.sugar}g`;
-    document.getElementById('sugarBar').style.width = `${(fruit.sugar/15)*100}%`;  // Assuming max sugar is 15g
+    document.getElementById('sugarBar').style.width = `${(fruit.sugar/15)*100}%`;
 
     document.getElementById('resultAcidity').textContent = fruit.acidity;
-    document.getElementById('acidityBar').style.width = `${(fruit.acidity/7)*100}%`;  // Assuming pH scale 0-7
+    document.getElementById('acidityBar').style.width = `${(fruit.acidity/7)*100}%`;
 
     document.getElementById('resultMoisture').textContent = `${fruit.moisture}%`;
     document.getElementById('moistureBar').style.width = `${fruit.moisture}%`;
 
     document.getElementById('resultFiber').textContent = `${fruit.fiber}g`;
-    document.getElementById('fiberBar').style.width = `${(fruit.fiber/5)*100}%`;  // Assuming max fiber is 5g
+    document.getElementById('fiberBar').style.width = `${(fruit.fiber/5)*100}%`;
 
     document.getElementById('resultVitC').textContent = `${fruit.vitC}mg`;
-    document.getElementById('vitCBar').style.width = `${(fruit.vitC/15)*100}%`;  // Assuming max VitC is 15mg
+    document.getElementById('vitCBar').style.width = `${(fruit.vitC/15)*100}%`;
 
     document.getElementById('resultAntioxidants').textContent = fruit.antioxidants;
     document.getElementById('antioxidantsBar').style.width = fruit.antioxidants === 'High' ? '75%' : fruit.antioxidants === 'Medium' ? '50%' : '25%';
 
     document.getElementById('resultStarch').textContent = `${fruit.starch}g`;
-    document.getElementById('starchBar').style.width = `${(fruit.starch/2)*100}%`;  // Assuming max starch is 2g
+    document.getElementById('starchBar').style.width = `${(fruit.starch/2)*100}%`;
 
     document.getElementById('resultProtein').textContent = `${fruit.protein}g`;
-    document.getElementById('proteinBar').style.width = `${(fruit.protein/2)*100}%`;  // Assuming max protein is 2g
+    document.getElementById('proteinBar').style.width = `${(fruit.protein/2)*100}%`;
 
-    // Update pesticide warning if needed
+    // Update pesticide warning
     const pesticideWarning = document.querySelector('.text-yellow-700');
     if (pesticideWarning) {
         pesticideWarning.textContent = `Potential pesticide residue detected (${fruit.pesticide}ppm). Tap for details.`;
     }
 
-    // Show welcome message when results are first loaded
+    // Update icon last
+    const iconPath = getIconClass(fruit.type);
+    const svgContent = await loadSvgIcon(iconPath);
+    const resultIconElement = document.getElementById('resultIcon');
+    resultIconElement.className = `icon icon-lg text-${fruit.color}`;
+    resultIconElement.innerHTML = svgContent;
+
+    // Show welcome message only if chat is empty
     if (chatContainer.children.length === 0) {
-        const welcomeMessage = `Hello! 👋 I'm Noora AI Assistant, here to help you understand your ${fruit.name} analysis.
+        const welcomeMessage = `Hello! 👋 I'm Noora AI Assistant, here to help you understand your ${fruit.type} analysis.
 
 I can help you with:
 • 🍎 Nutritional insights and benefits
@@ -1116,7 +1201,6 @@ function simulateParameterUpdates() {
             moistureValue.textContent = `${fruit.moisture}%`;
             acidityValue.textContent = fruit.acidity;
             sugarValue.textContent = `${fruit.sugar}g`;
-            // Show detection panel with current fruit data
             updateDetectionWithFruitData();
             return;
         }
